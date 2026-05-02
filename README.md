@@ -1,5 +1,4 @@
 # 🚀 Courier Burnout Intelligence System
-Gig Workforce Insight &amp; Burnout Prevention System (WIBPS)
 
 An end-to-end **Machine Learning + Analytics + API + Interactive Dashboard** system designed to analyze and predict burnout risk among gig economy food delivery couriers.
 
