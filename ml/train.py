@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 from ml.preprocessing import load_data, preprocess
-from ml.models import get_models
+from ml.model import get_models
 
 df = load_data()
 
