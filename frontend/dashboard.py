@@ -7,6 +7,12 @@ import requests
 # PAGE CONFIG
 # ==============================
 st.set_page_config(page_title="WIBPS Dashboard", layout="wide")
+st.markdown("""
+    <style>
+    button[kind="header"] {display: none;}
+    .stDeployButton {display: none;}
+    </style>
+""", unsafe_allow_html=True)
 
 # ==============================
 # LOAD DATA
