@@ -1,93 +1,110 @@
-# 🚀 Courier Burnout Intelligence System
+# 🚀 Workforce Insight & Burnout Prevention System (WIBPS)
 
-An end-to-end **Machine Learning + Analytics + API + Interactive Dashboard** system designed to analyze and predict burnout risk among gig economy food delivery couriers.
+WIBPS is an end-to-end **SaaS-style workforce analytics system** designed to monitor, analyze, and predict burnout risk among **gig economy food delivery workers** (e.g., Uber Eats, Wolt, Lieferando).
 
-This project addresses a key gap in the gig economy:
-👉 **lack of data-driven visibility into workforce stress, instability, and burnout risk**, which leads to poor decision-making and reduced worker well-being.
-
----
-
-# 📌 Problem Statement
-
-The gig economy offers flexibility but often results in:
-
-* ❌ Unstable income
-* ❌ Long and irregular working hours
-* ❌ High stress levels
-* ❌ Poor work-life balance
-
-Currently, there is **no structured system to identify burnout risk early**.
-
-👉 This project solves that by providing a **data-driven burnout prediction and decision-support system**.
+The system integrates **data processing, machine learning, API services, and an interactive dashboard** to provide real-time decision support for workforce management.
 
 ---
 
-# 🎯 What This System Does
+# 📌 Problem Context
 
-* Predicts **burnout risk (High / Low)**
-* Analyzes **key drivers of burnout**
-* Segments workers using **clustering**
-* Provides **actionable recommendations**
-* Visualizes insights through an **interactive dashboard**
+Gig workers operate in highly dynamic environments characterized by:
 
----
+* Irregular working hours
+* Fluctuating income
+* High operational pressure
+* Limited organizational support
 
-# 📊 Features
+Most existing tools focus on **employee surveys or well-being tracking**, which provide delayed or subjective insights.
 
-### 🔍 Analytics & Visualization
-
-* Interactive Streamlit dashboard
-* KPI metrics (stress, hours, burnout rate)
-* Multi-tab insights (workload, income, burnout)
-
-### 🤖 Machine Learning
-
-* Logistic Regression
-* Random Forest (best-performing model)
-* Feature engineering (workload, stress ratio)
-
-### 📡 Backend API
-
-* FastAPI-based prediction service
-* Real-time inference from dashboard
-
-### 🎯 Decision Intelligence
-
-* Burnout risk prediction
-* Rule-based recommendation system
-* Workforce segmentation (KMeans clustering)
-
-### 📈 Research Figures (Thesis Ready)
-
-* Burnout distribution
-* Hours vs burnout
-* Income variability impact
-* Courier clustering
+👉 WIBPS addresses this gap by analyzing **behavioral and operational data** to estimate burnout risk and support proactive decision-making.
 
 ---
 
-# 🧱 Project Structure
+# 🎯 System Objective
+
+The objective of WIBPS is to:
+
+* Detect early signs of burnout risk
+* Provide data-driven workforce insights
+* Support operational decision-making
+* Improve worker well-being and platform efficiency
+
+---
+
+# ⚙️ What WIBPS Does
+
+### 🔍 Workforce Analytics
+
+* Aggregates delivery activity into worker-level metrics
+* Computes workload indicators (orders, night shifts, delivery time)
+
+### 🤖 Burnout Risk Modeling
+
+* Classifies workers into:
+
+  * Low risk
+  * Medium risk
+  * High risk
+
+### 🧠 Worker Segmentation
+
+* Uses clustering (KMeans) to identify behavioral workforce groups
+
+### 📊 Decision Dashboard
+
+* Visualizes burnout patterns and workload distribution
+* Highlights high-risk workers
+* Provides actionable recommendations
+
+### 📡 API-Based Prediction
+
+* FastAPI backend enables real-time prediction requests
+* Supports integration with external systems
+
+---
+
+# 🧠 Important Clarification
+
+Burnout is influenced by multiple factors including:
+
+* Personal life conditions
+* Mental and physical health
+* Financial and social stress
+
+👉 WIBPS does **not diagnose burnout**, but estimates **operational burnout risk** based on observable work patterns.
+
+---
+
+# 🧱 System Architecture
 
 ```
-gig_burnout_project/
+Raw Data → Preprocessing → Feature Engineering → ML Model → API → Dashboard
+```
+
+---
+
+# 📁 Project Structure
+
+```
+gig_burnout_prevention_system/
 │
 ├── data/
-│   └── courier_data.csv
+│   ├── raw datasets
+│   ├── processed_data.csv
+│   └── model_output.csv
 │
 ├── ml/
-│   ├── train.py
-│   ├── preprocessing.py
-│   ├── models.py
-│   └── __init__.py
+│   ├── data_preprocessing.py
+│   ├── eda_analysis.py
+│   └── model.py
 │
 ├── backend/
 │   ├── api.py
-│   ├── model_service.py
-│   └── __init__.py
+│   └── model_service.py
 │
-├── frontend/
-│   ├── dashboard.py
-│   └── __init__.py
+├── dashboard/
+│   └── dashboard.py
 │
 ├── artifacts/
 │   ├── model.pkl
@@ -100,13 +117,13 @@ gig_burnout_project/
 
 ---
 
-# ⚙️ Setup Instructions (Step-by-Step)
+# ⚙️ Setup Instructions
 
-## 1️⃣ Clone the Project
+## 1️⃣ Clone Repository
 
 ```bash
 git clone <your-repo-link>
-cd gig_burnout_project
+cd gig_burnout_prevention_system
 ```
 
 ---
@@ -115,8 +132,7 @@ cd gig_burnout_project
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate      # Windows
+source venv/bin/activate
 ```
 
 ---
@@ -129,33 +145,31 @@ pip install -r requirements.txt
 
 ---
 
-## 4️⃣ (Mac Only) Fix XGBoost Issue
+## 4️⃣ Run Data Pipeline
 
 ```bash
-brew install libomp
+python ml/data_preprocessing.py
 ```
 
-If needed:
+Output:
 
-```bash
-sudo xcodebuild -license accept
+```
+data/processed_data.csv
+data/attrition_cleaned.csv
 ```
 
 ---
 
-## 5️⃣ Train the Model
+## 5️⃣ Run Machine Learning Model
 
 ```bash
-python -m ml.train
+python ml/model.py
 ```
 
-✅ This generates:
+Output:
 
 ```
-artifacts/
-├── model.pkl
-├── scaler.pkl
-├── features.pkl
+data/model_output.csv
 ```
 
 ---
@@ -166,7 +180,7 @@ artifacts/
 uvicorn backend.api:app --reload
 ```
 
-👉 Open:
+API Docs:
 
 ```
 http://127.0.0.1:8000/docs
@@ -176,13 +190,11 @@ http://127.0.0.1:8000/docs
 
 ## 7️⃣ Run Dashboard
 
-Open a new terminal:
-
 ```bash
-streamlit run frontend/dashboard.py
+streamlit run dashboard/dashboard.py
 ```
 
-👉 Dashboard:
+Dashboard:
 
 ```
 http://localhost:8501
@@ -190,152 +202,80 @@ http://localhost:8501
 
 ---
 
-# 🧠 How the System Works
+# 📊 Key Features
 
-1. User inputs courier data via dashboard
-2. Data sent to FastAPI backend
-3. Backend:
+### ✔ Burnout Risk Classification
 
-   * Applies feature engineering
-   * Aligns feature columns
-   * Scales data
-4. ML model predicts burnout risk
-5. Dashboard displays:
+* Random Forest model
+* Categorizes workers into Low / Medium / High risk
 
-   * Prediction
-   * Insights
-   * Recommendations
+### ✔ Feature Engineering
 
----
+* Workload index
+* Night shift intensity
+* Delivery efficiency
 
-# 🔍 Burnout Logic (Core Idea)
+### ✔ Clustering
 
-Burnout risk is derived from:
+* KMeans segmentation
+* Identifies high-pressure worker groups
 
-* High stress level
-* Long working hours
-* High income variability
+### ✔ Dashboard Insights
 
-```python
-burnout_risk = (
-    (stress_level > 7) &
-    (weekly_hours > 55) &
-    (income_variability > 0.4)
-)
-```
+* Workload vs burnout visualization
+* Burnout distribution
+* Worker segmentation
+* High-risk alerts
 
 ---
 
-# 📊 Key Insights
+# 📈 Example Insight
 
-* 🔥 Stress level is the strongest predictor of burnout
-* ⏱ Long working hours significantly increase risk
-* 💸 Income instability contributes to burnout
-* 📊 Cluster analysis reveals distinct workforce segments
-
----
-
-# 🎯 Example Prediction Input
-
-```json
-{
-  "weekly_hours": 60,
-  "deliveries_per_week": 120,
-  "weekly_income": 900,
-  "income_variability": 0.7,
-  "stress_level": 8,
-  "work_life_balance": 3,
-  "job_satisfaction": 4,
-  "experience_years": 2
-}
-```
+* High workload combined with night shifts increases burnout risk
+* Not all high-hour workers are high-risk → workload composition matters
+* Worker clusters reveal different behavioral patterns
 
 ---
 
-# ⚠️ Common Errors & Fixes
+# 🚨 Decision Support Output
 
-## ❌ ModuleNotFoundError
+The system enables managers to:
 
-✔ Run with:
-
-```bash
-python -m ml.train
-```
-
----
-
-## ❌ API not responding
-
-✔ Start backend:
-
-```bash
-uvicorn backend.api:app --reload
-```
+* Identify high-risk workers
+* Adjust workload distribution
+* Limit excessive night shifts
+* Improve workforce stability
 
 ---
 
-## ❌ Burnout always 0
+# ⚠️ Limitations
 
-✔ Ensure burnout logic exists in dashboard & preprocessing
-
----
-
-## ❌ XGBoost error (Mac)
-
-✔ Install:
-
-```bash
-brew install libomp
-```
+* Does not capture personal or psychological factors
+* Uses simulated / public datasets
+* Requires real platform data for production deployment
 
 ---
 
-# 🚀 How to Use
-
-1. Apply filters (sidebar)
-2. Explore insights (tabs)
-3. Go to **Prediction tab**
-4. Enter courier details
-5. Click **Predict**
-6. View:
-
-   * Burnout risk
-   * Recommended actions
-
----
-
-# 🎓 Academic Value
+# 🎓 Academic Contribution
 
 This project demonstrates:
 
-* End-to-end ML pipeline
-* Feature engineering & preprocessing
-* Classification + clustering
+* End-to-end ETL pipeline
+* Exploratory Data Analysis (EDA)
+* Supervised (classification) and unsupervised (clustering) ML
 * API-based deployment
 * Interactive BI dashboard
 * Decision-support system design
 
 ---
 
-# 🧠 Contribution
-
-This is not just a prediction model.
-
-👉 It is a **Decision Intelligence System** that helps:
-
-* Platforms optimize workforce management
-* Reduce burnout risk
-* Improve operational efficiency
-
----
-
 # 👨‍💻 Author
 
-Your Name
-Business Intelligence / Data Science Project
+Subhendu Kumar Pati
+Business Intelligence Project
 
 ---
 
 # ⭐ Final Note
 
-This system transforms raw gig worker data into **actionable insights**, enabling smarter, data-driven decisions in the gig economy.
+WIBPS transforms operational gig worker data into **actionable workforce intelligence**, enabling platforms to shift from reactive management to **proactive burnout prevention**.
