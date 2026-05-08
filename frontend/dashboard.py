@@ -1,12 +1,24 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import requests
+import sys
+import os
+
+# ==============================
+# FIX IMPORT PATH
+# ==============================
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ==============================
+# IMPORT MODEL (NO API)
+# ==============================
+from backend.model_service import predict
 
 # ==============================
 # PAGE CONFIG
 # ==============================
 st.set_page_config(page_title="WIBPS Dashboard", layout="wide")
+
 st.markdown("""
     <style>
     button[kind="header"] {display: none;}
@@ -44,7 +56,7 @@ burnout_filter = st.sidebar.selectbox(
 )
 
 # ==============================
-# APPLY FILTERS (FOR CHARTS ONLY)
+# APPLY FILTERS
 # ==============================
 filtered_df = df[
     (df["total_orders"].between(*orders_range)) &
@@ -89,8 +101,6 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # TAB 1 — OVERVIEW
 # ==============================
 with tab1:
-    st.subheader("Workload vs Burnout")
-
     fig = px.scatter(
         filtered_df,
         x="workload_index",
@@ -102,11 +112,9 @@ with tab1:
     st.plotly_chart(fig, use_container_width=True)
 
 # ==============================
-# TAB 2 — BURNOUT ANALYSIS
+# TAB 2 — BURNOUT
 # ==============================
 with tab2:
-    st.subheader("Burnout Distribution")
-
     fig = px.box(
         filtered_df,
         x="burnout_level",
@@ -116,11 +124,9 @@ with tab2:
     st.plotly_chart(fig, use_container_width=True)
 
 # ==============================
-# TAB 3 — WORKLOAD INSIGHTS
+# TAB 3 — WORKLOAD
 # ==============================
 with tab3:
-    st.subheader("Order Value vs Burnout")
-
     fig = px.scatter(
         filtered_df,
         x="avg_order_value",
@@ -130,7 +136,7 @@ with tab3:
     st.plotly_chart(fig, use_container_width=True)
 
 # ==============================
-# TAB 4 — API PREDICTION
+# TAB 4 — PREDICTION (UPDATED)
 # ==============================
 with tab4:
 
@@ -159,28 +165,51 @@ with tab4:
         }
 
         try:
-            res = requests.post("http://localhost:8000/predict", json=payload)
+            result = predict(payload)
 
-            if res.status_code == 200:
-                result = res.json()
-
-                if result["label"] == "High":
-                    st.error("🔥 High Burnout Risk")
-                else:
-                    st.success("✅ Low Burnout Risk")
-
+            # ==============================
+            # RESULT DISPLAY
+            # ==============================
+            if result == 1:
+                st.error("🔥 High Burnout Risk")
             else:
-                st.error("API Error: " + res.text)
+                st.success("✅ Low Burnout Risk")
 
-        except:
-            st.error("⚠️ API not running. Start backend first.")
+            # ==============================
+            # RECOMMENDATIONS
+            # ==============================
+            st.markdown("### 💡 Recommendations")
+
+            rec = []
+
+            if stress > 7:
+                rec.append("Reduce workload and manage stress")
+
+            if weekly_hours > 55:
+                rec.append("Limit working hours")
+
+            if variability > 0.5:
+                rec.append("Stabilize income")
+
+            if wlb < 5:
+                rec.append("Improve work-life balance")
+
+            if satisfaction < 5:
+                rec.append("Improve job satisfaction")
+
+            if len(rec) == 0:
+                rec.append("Maintain current work pattern")
+
+            for r in rec:
+                st.write(f"• {r}")
+
+        except Exception as e:
+            st.error(f"Prediction Error: {e}")
 
 # ==============================
 # TAB 5 — SEGMENTATION
 # ==============================
 with tab5:
-    st.subheader("Worker Segmentation")
-
     fig = px.scatter(
         df,
         x="total_orders",
@@ -191,10 +220,9 @@ with tab5:
     st.plotly_chart(fig, use_container_width=True)
 
 # ==============================
-# ALERTS SECTION (FIXED + BONUS)
+# ALERTS
 # ==============================
 st.subheader("🚨 High Risk Riders")
-st.caption("Showing high-risk riders across entire workforce")
 
 high_risk = df[df["burnout_level"] == "High"]
 
@@ -204,18 +232,18 @@ else:
     st.info("No high-risk riders detected")
 
 # ==============================
-# RECOMMENDATIONS
+# GLOBAL RECOMMENDATION
 # ==============================
-st.subheader("💡 Recommendations")
+st.subheader("💡 System Recommendation")
 
 if len(high_risk) > 0:
-    st.warning("⚠️ High burnout risk detected")
+    st.warning("""
+    ⚠️ High burnout risk detected across workforce
 
-    st.write("""
     Suggested Actions:
-    - Reduce workload for high-risk riders
-    - Limit night shift assignments
-    - Balance order distribution
+    - Reduce workload
+    - Limit night shifts
+    - Balance order allocation
     - Encourage rest periods
     """)
 else:
